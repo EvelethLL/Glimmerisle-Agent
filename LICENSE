@@ -1,0 +1,33 @@
+MIT License
+
+Copyright (c) 2026 Kondius
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## 例外：第三方组件（不属于上述 MIT 许可）
+
+以下文件为第三方专有组件，**不在上述 MIT 许可范围内**，按其自身许可提供：
+
+- `ui/panels/vendor/gsap-3.13.0.min.js` —— GSAP（GreenSock）构建产物，依 **GSAP Standard License** 提供（专有许可；详见 https://gsap.com/standard-license/ 及同目录 vendor/README）。本仓库收录该文件仅为保持源码快照完整可运行，不构成对该文件的再授权；使用前请自行遵守 GSAP 官方许可条款。
+
+除上述明确列出的文件外，本仓库全部内容依上述 MIT 许可提供。
+
+> 说明：本 LICENSE 由第三方存档者依原项目 `package.json` 的 `license: MIT` 声明补入，版权归属原作者 Kondius。本仓库为非官方存档，与原作者无关联。
