@@ -12,6 +12,9 @@ QQ Agent 的 DSH 重写版（薄内核 + 全插件外壳）。行为以规格书
 
 ## 安装与连接
 
+> [!NOTE]
+> **存档者注（2026-11-06）**：上游仓库 `K0nd1us/QQ-agent` 已不可访问，下面的 `git clone` 地址已失效；且上游把本项目放在子目录 `QQ-agent/0.5(unfinished)` 里，而**本仓库根目录就是该子目录的内容**。因此请忽略下面代码块里的 clone/cd 两行，改用：在本仓库点绿色 **Code** 按钮下载 zip（或去 Releases 下附件），解压后在仓库根目录直接 `npm install`，再 `npm run desktop`（无桌面环境则 `npm run server`）。本节其余文字为上游原文，原样保留。
+
 本版本仍在开发和验收中。需要 Node.js 20 或更新版本，并由用户自行准备提供 OneBot v11 正向 WebSocket 事件和 HTTP API 的外部协议端。
 
 ```bash
