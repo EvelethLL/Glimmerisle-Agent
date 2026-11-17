@@ -245,7 +245,7 @@ curl http://127.0.0.1:3210/api/chats      # 会话列表与消息数
 2. **仍有指向原作者服务器的外联**：`kondius.cn/qq-agent/` 四处——价格表、版本检查、社区面板、技能市场。该域名目前解析不到，日志里会周期性出现 `ENOTFOUND`
 3. **遥测默认开启**：`telemetry` 扩展每 6 小时上报一次，载荷 = 安装 ID + 版本 + 调用次数 + token 数 + **工具名→次数表**；不含消息正文。要关：`skills.telemetry.enabled = false`
 4. **`asar: false` + 无沙箱**：任何扩展等同本机 Node 权限，`mcp-bridge` 自带 `proc.exec`。**只装你信得过的扩展**
-5. **聊天正文经第三方中转**：默认走 `api.apigoto.com` 这类中转，介意就把 `api.baseUrl` 换成官方端点
+5. **聊天正文会经过你自己填的端点**：`api.baseUrl` 默认是空字符串，必须自己填。填官方 API 就是官方，填第三方中转就是中转——正文和图片都会经过那台服务器。介意就用官方端点，别用来路不明的中转
 6. **`extension-dev test` 在 0.5.1 有回归**（见第七节）；`/api/prompt-preview` 也不可信，验证提示词要看 `sessions/*.json` 里的 `systemPrompt`
 
 ## 十二、许可与致谢
