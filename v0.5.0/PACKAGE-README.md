@@ -2,7 +2,8 @@
 
 > 本包是 **QQ Agent 0.5** 的完整可运行源码快照。
 > **背景**：上游 GitHub 仓库已被作者删除，此份来自本人本机在跑的实例，作为留存与分享用。
-> 许可证：MIT（全文见 `LICENSE`，版权人 Kondius；`ui/panels/vendor/` 的 GSAP 文件不在此列，见 LICENSE 例外段）。
+> **位置**：本文件在仓库的 `v0.5.0/` 目录内，下文路径（`src/`、`启动本地UI.bat`、`ui/` 等）都相对这个目录；`LICENSE` 已上移到仓库根目录（`../LICENSE`）。
+> 许可证：MIT（全文见 `../LICENSE`，版权人 Kondius；`ui/panels/vendor/` 的 GSAP 文件不在此列，见 LICENSE 例外段）。
 
 ---
 

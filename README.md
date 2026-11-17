@@ -1,73 +1,77 @@
-![微光星屿 Agent](assets/banner.png)
+![微光星屿 Agent](v0.5.0/assets/banner.png)
+
+# 微光星屿 Agent（Glimmerisle Agent）
 
 > [!IMPORTANT]
-> **存档声明**（2026-11-06，由存档者添加，非原作者内容）
-> 本仓库为**第三方非官方源码存档**：非原作者、非维护者。存档代号 **微光星屿 Agent（Glimmerisle Agent）**；原项目名 **QQ Agent 0.5**（DSH 架构），原作者 Kondius——原项目名保留于此供检索。上游 GitHub 仓库已不可访问，本仓库内容为存档者本机留存的可运行快照，用于学习与研究。
-> 许可证：依 `package.json` 声明的 **MIT**（版权人 Kondius），例外与第三方组件见 [LICENSE](LICENSE)。
-> 存档者的改动清单、验证状态与部署步骤见 [PACKAGE-README.md](PACKAGE-README.md)。如版权人对本存档有异议，请通过 GitHub 联系存档者，将尽快处理。
-
-> [!NOTE]
-> **0.5.1 已收录（2026-11-17）**
-> - [`v0.5.1/`](v0.5.1) —— 官方安装版 0.5.1 的 `resources/app` 源码（源码明文，未含 `node_modules`）
-> - [`CHANGELOG-0.5.1.md`](CHANGELOG-0.5.1.md) —— 0.5.1 相对 0.5.0 的差异、本存档的改动、已知问题、未收录内容
-> - 开箱即用的安装包见 **Releases → v0.5.1**
->
-> 下面正文仍是 **0.5.0** 的说明；用 0.5.1 请从 `v0.5.1/` 进入。
+> **存档声明**（2026-11-06 首版，2026-11-17 整理目录，均由存档者添加，非原作者内容）
+> 本仓库是**第三方非官方源码存档**：非原作者、非维护者。存档代号 **微光星屿 Agent（Glimmerisle Agent）**；原项目名 **QQ Agent**（DSH 架构），原作者 Kondius——原项目名保留于此供检索。上游 GitHub 仓库已不可访问，本仓库内容为存档者本机留存的可运行快照，用于学习与研究。
+> 许可证：**MIT**（版权人 Kondius），例外与第三方组件见 [LICENSE](LICENSE)。如版权人对本存档有异议，请通过 GitHub 联系存档者，将尽快处理。
 
 ---
 
-# QQ Agent 0.5（DSH 架构）
+## 这是什么
 
-QQ Agent 的 DSH 重写版（薄内核 + 全插件外壳）。行为以规格书为验收依据，当前实现和验收边界记录在下方进度文件中。
+原项目是一个「薄内核 + 全插件」架构的 QQ 聊天机器人宿主（Electron 桌面端 + 本地控制台）。本仓库保存了它的两个版本：
 
-## 安装与连接
+| 目录 | 版本 | 形态 | 建议 |
+|---|---|---|---|
+| [`v0.5.1/`](v0.5.1) | **0.5.1** | 官方安装版的 `resources/app` 源码（源码明文，`asar: false`） | **想动手改就用这个** |
+| [`v0.5.0/`](v0.5.0) | 0.5.0 | 完整可运行源码快照 + 存档者的 7 处改动 | 想对照历史差异时看 |
 
-> [!NOTE]
-> **存档者注（2026-11-06）**：上游仓库 `K0nd1us/QQ-agent` 已不可访问，下面的 `git clone` 地址已失效；且上游把本项目放在子目录 `QQ-agent/0.5(unfinished)` 里，而**本仓库根目录就是该子目录的内容**。因此请忽略下面代码块里的 clone/cd 两行，改用：在本仓库点绿色 **Code** 按钮下载 zip（或去 Releases 下附件），解压后在仓库根目录直接 `npm install`，再 `npm run desktop`（无桌面环境则 `npm run server`）。本节其余文字为上游原文，原样保留。
+- **只想要能直接跑的程序** → 去 [Releases](../../releases) 下 `v0.5.1` 的开箱即用包，解压双击 `Glimmerisle Agent.exe`，不需要 `npm install`
+- **0.5.1 改了什么、已知问题有哪些** → [`CHANGELOG-0.5.1.md`](CHANGELOG-0.5.1.md)
+- **0.5.0 存档的改动清单与部署步骤** → [`v0.5.0/PACKAGE-README.md`](v0.5.0/PACKAGE-README.md)
 
-本版本仍在开发和验收中。需要 Node.js 20 或更新版本，并由用户自行准备提供 OneBot v11 正向 WebSocket 事件和 HTTP API 的外部协议端。
+## 快速开始（0.5.1，源码）
+
+需要 **Node.js 20+**，以及一个外部 OneBot v11 协议端（SnowLuma / NapCat 等，本仓库不含）。
+
+**双击（推荐）**
+
+- `v0.5.1/启动本地UI.bat` —— 桌面版
+- `v0.5.1/启动服务器UI.bat` —— 无头版，控制台在 `http://127.0.0.1:3210`
+
+两个脚本都会自己检查依赖：缺 `node_modules` 就跑 `npm install`，桌面版缺 Electron 会自动装 `electron@45.3.2`。
+
+**命令行**
 
 ```bash
-git clone https://github.com/K0nd1us/QQ-agent.git
-cd "QQ-agent/0.5(unfinished)"
+cd v0.5.1
 npm install
-npm run desktop
+npm run server      # 无头
+npm run desktop     # 桌面（需先 npm i -D electron@45.3.2）
 ```
 
-无桌面环境时运行 `npm run server`，再打开 `http://127.0.0.1:3210`。
+> 0.5.1 的 `package.json` 原本没有 `scripts` 段（官方安装版靠 exe 启动），这里的 `server` / `desktop` 是存档者补的。
 
-按协议端自身说明完成安装、启动与登录后，在设置页「OneBot」填写 WebSocket 地址、HTTP API 地址及各自访问令牌。对应配置项为 `onebot.wsUrl`、`onebot.httpUrl`、`onebot.accessToken` 和 `onebot.httpAccessToken`。QQ Agent 不代管外部程序的安装、启动、账号目录或令牌提取；使用许可和客户端版本要求请查阅所选程序的说明。
+## 快速开始（0.5.0，源码）
 
-升级前备份配置和数据，升级后重新填写 OneBot 连接配置。旧版专属运行时配置不自动迁移，已有第三方程序和账号数据不会由本次改动删除。连接后应在测试会话验证所需的收发与媒体行为；自动测试和连接状态不代表真实 QQ 联调已完成。
+```bash
+cd v0.5.0
+npm install
+```
 
-## 事实来源
+然后双击 `v0.5.0/启动本地UI.bat`（桌面）或 `启动服务器UI.bat`（无头）。与上游 0.5.0 的 7 处差异见 [`v0.5.0/PACKAGE-README.md`](v0.5.0/PACKAGE-README.md)。
 
-- 行为规格：`../dsh-spec/SPEC.md`（§1–§18，F-001~F-223 + §5/§8/§9 三段式契约）
-- 结构图纸：`../dsh-spec/DSH-ARCH.md`
-- 2026-10-16 追加式组合规格：[默认实现与追加式组合 v2.1](docs/architecture-composition.md)，取代旧版“固定内核/不可替换内核页”的限制。
-- 当前进度：`progress.md`
-- 有头验收：`docs/headed-qa-checklist.md`、`docs/headed-qa-results.md`
-- 回归证据：`docs/headed-qa-regression-evidence.md`
-- 追加式组合验收：[实现与回归证据](docs/composition-regression-evidence.md)，[可复制示例](examples/composition/README.md)。
-- 部分重叠贡献：[逐目标替换、方法包装与多层撤销验收](docs/composition-overlap-evidence.md)。
-- 决策记录：`../dsh-spec/NEXT-SESSION.md` §3（D-1~D-7）
+## 版本差异（0.5.1 相对 0.5.0）
 
-## 依靠 AI 添加功能
+内核 53 → 71 个文件（+18 个新模块）、24 个文件实质改动；内置扩展 9 个新增 + 20 个改写；控制台 +约 40 个 API。主要变化：
 
-在技能、插件或社区页打开“创作扩展”，直接复制提示词；也可从[文档版提示词](docs/ai-extension-prompt.md)开始。AI 会先用日常话问清并确认需求，再自行读取[开发文档](docs/extension-authoring.md)、判断做成技能还是插件，完成制作、自检并放入对应文件夹。新功能默认禁用，由你在列表中点击启用；无需选择技术类型或自己运行命令，不会自动上传社区。需要 ZIP 时可另行打包。
+- **产品化**：安装器、自动更新 + 回滚、托盘、多账号、从 `protocols/` 拉起协议端
+- **新功能**：社区 feed、扩展市场、可视化群管理规则、MCP 桥、`ctx.registerCommand`、`ctx.storage.protect`（DPAPI）
+- **架构与成本**：启用即授权、流式输出、记忆与表情拆「稳定前缀 + 新增后缀」以保缓存
+- **治「静默失败」**：扩展加载诊断（错误码 + 中文解释）、`send-failure.js`、`/api/status` 直接返回 `errorCode`
 
-开发者可查[完整参考](docs/extension-reference.md)，直接复用[完整范例](examples/extensions/README.md)。提供自检、离线执行和社区同格式打包工具：`npm run extension:check -- <目录>`、`npm run extension:test -- <目录> --case <用例文件>`、`npm run extension:pack -- <目录> --out <ZIP路径>`。Windows 安装版可使用 `scripts\extension-dev.cmd`，复用自带运行时。
+逐条说明见 [`CHANGELOG-0.5.1.md`](CHANGELOG-0.5.1.md)。
 
-0.4 扩展迁移先查[逐项能力对照](docs/v04-extension-parity.md)，不要混用旧日志函数、执行参数顺序或 sender。自检、真实 QQ 联调与生产社区发布分别报告结果；本轮过程见[AI 创作验收](docs/ai-extension-validation.md)。
+## 已知问题
 
-## 工作约定
+- 安装包**未签名**，Windows SmartScreen 会提示「未知发布者」
+- 仍有指向原作者服务器 `kondius.cn` 的外联（价格表 / 版本检查 / 社区 / 市场），该域名目前解析不到，日志里会周期性出现 `ENOTFOUND`
+- 遥测默认开启（安装 ID + 版本 + 调用次数 + token 数 + 工具名→次数，不含消息正文）；要关：`skills.telemetry.enabled = false`
+- `asar: false` + 无沙箱：扩展等同本机 Node 权限，只装信得过的扩展
+- 0.5.1 的 `extension-dev test` 有回归：声明了权限的扩展必 FAIL，`check` 仍可信
 
-1. 用户已授权参考 `../develop/` 的公开源码补齐功能；该目录的私有配置、账号、凭据和日志不属于参考范围。
-2. 用户已授权同步修订插件化架构规格。修复应附相关验证，区分产品缺陷、未完成的实测和外部条件不足。
-3. 本地测试使用独立合成副本；不得将安装校验、模拟接口或自动测试当作真实账号联调通过。
-4. 当前 Git 元数据只读，保留现有变更。安装包打包按用户要求延期，完成测试后再统一安排。
+## 许可
 
-## 状态
-
-- 已实现插件宿主、控制台及桌面界面，正在继续修复和本地有头验收。最新完整回归、实际操作记录和剩余条件以 `progress.md` 及上述验收文件为准。
-- 外部协议端和 QQ 客户端由用户独立管理；当前版本不提供便携运行时安装、进程管理或登录态迁移。
+MIT，版权人 Kondius。第三方组件有例外，见 [LICENSE](LICENSE)（`ui/panels/vendor/` 下的 GSAP 不是 MIT）。

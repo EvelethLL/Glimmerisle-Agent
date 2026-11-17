@@ -1,0 +1,16 @@
+# 依赖与运行时产物（两个版本通用）
+node_modules/
+
+# 数据目录：会话、记忆、账本；config.json 里有 API Key
+data/
+data-v05/
+data-2/
+
+# 日志与运行缓存
+*.log
+debug.log
+data-plugin-runtime/
+.extension-management-v1/
+
+# 本地覆盖层（个人定制）
+overrides/
