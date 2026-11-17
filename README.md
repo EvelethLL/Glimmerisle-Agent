@@ -6,6 +6,14 @@
 > 许可证：依 `package.json` 声明的 **MIT**（版权人 Kondius），例外与第三方组件见 [LICENSE](LICENSE)。
 > 存档者的改动清单、验证状态与部署步骤见 [PACKAGE-README.md](PACKAGE-README.md)。如版权人对本存档有异议，请通过 GitHub 联系存档者，将尽快处理。
 
+> [!NOTE]
+> **0.5.1 已收录（2026-11-17）**
+> - [`v0.5.1/`](v0.5.1) —— 官方安装版 0.5.1 的 `resources/app` 源码（源码明文，未含 `node_modules`）
+> - [`CHANGELOG-0.5.1.md`](CHANGELOG-0.5.1.md) —— 0.5.1 相对 0.5.0 的差异、本存档的改动、已知问题、未收录内容
+> - 开箱即用的安装包见 **Releases → v0.5.1**
+>
+> 下面正文仍是 **0.5.0** 的说明；用 0.5.1 请从 `v0.5.1/` 进入。
+
 ---
 
 # QQ Agent 0.5（DSH 架构）
