@@ -9,7 +9,9 @@
 ## 一、怎么用
 
 - `v0.5.1/` 就是安装版 `resources/app` 的内容：`src/`（内核）、`ui/`（控制台）、`bundled/`（内置插件与技能）、`docs/`、`scripts/`、`electron/`
-- 装依赖：`cd v0.5.1 && npm install`；启动：`npm run desktop`（有桌面）或 `npm run server`（无头，控制台在 `http://127.0.0.1:3210`）
+- **双击启动（推荐）**：`v0.5.1/启动本地UI.bat`（桌面版）或 `启动服务器UI.bat`（无头，控制台 `http://127.0.0.1:3210`）。两个脚本都会自己检查 `node_modules`，缺依赖就 `npm install`，桌面版还会按需装 `electron@45.3.2`
+- 命令行等价写法：`cd v0.5.1 && npm install`，然后 `npm run server`（无头）或先 `npm i -D electron@45.3.2` 再 `npm run desktop`
+- `package.json` 原本没有 `scripts` 段（上游安装版靠 exe 启动），这里补了 `server` / `desktop` 两条，只为源码用户方便
 - 需要**外置 OneBot v11 协议端**（SnowLuma / NapCat 之类），本仓库不含协议端
 - 数据目录：源码跑用 `appRoot/data`；官方安装版用 `data-v05/`（两边不通用，迁移要拷 `data-v05/plugins` 与 `config.skills`）
 
