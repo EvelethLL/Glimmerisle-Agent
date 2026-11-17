@@ -13,17 +13,27 @@
 
 一句话：把一个大模型做成**「住在 QQ 里、有自己的生活节奏的人」**，而不是问一句答一句的客服。
 
-它跑在你自己的电脑上（Electron 桌面端 + 本地控制台 `http://127.0.0.1:3210`），通过外置的 OneBot v11 协议端连 QQ。给模型配上角色卡、长期记忆和一组扩展之后，它能做到：
+它跑在你自己的电脑上（Electron 桌面端 + 本地控制台 `http://127.0.0.1:3210`），通过外置的 OneBot v11 协议端连 QQ。
+
+**内核与内置扩展自带的能力**（这部分开箱就有，只需配模型和协议端）：
 
 | 能力 | 具体表现 |
 |---|---|
-| **像人那样说话** | 一句话拆成几条短气泡发出，按字数留 1~3 秒打字间隔；私聊与群聊跑两套语气（群里收敛、私聊放开）；支持引用回复、@ 唤醒 |
-| **记得住人** | 按成员存长期「印象」；记忆簿记事件、偏好、雷点、约定；每天夜里自动写一篇「她自己」的日记（跨天漏写会补） |
-| **有自己的生活** | `her-life` 每天生成一份作息（起床、吃饭、午睡、出门），20~45 分钟醒一次主动找人说话；带睡眠时段、半夜迷糊、出门由头 |
-| **会发表情和语音** | 按情绪从本地表情库挑一张；语音走 TTS，支持 `[笑]` `[叹气]` 这类声音标签，合成成真的气声而不是把字念出来 |
-| **看得懂图、查得到资料** | 消息里的图片会真的去读（多模态），需要时联网搜索、翻本地资料库 |
+| **像人那样说话** | 一句话拆成几条短气泡发出，按字数留 1~3 秒打字间隔（默认 `1000~3000ms`，每 20 字加一档）；私聊与群聊跑两套语气（群里收敛、私聊放开）；支持引用回复、@ 唤醒 |
+| **记得住人** | 内核按成员存长期「印象」并定期归并（`memory/` 目录）；表情库按情绪调取 |
+| **看得懂图、查得到资料** | 消息里的图片会真的去读（多模态，需配 `visionModel`）；内置联网搜索、消息查询、提醒等工具 |
+| **听得到语音** | 内置 `voice-to-text` 把语音消息转文字——**默认关闭，需要自己填一个 OpenAI 兼容的 ASR 地址** |
 | **可扩展** | 插件（常驻能力）与技能（一组工具）两套模型，带 manifest、权限 scope、设置面板、离线自检脚本；控制台里能看会话、调参数、装卸扩展 |
 | **工程侧** | 流式输出、前缀缓存分段（省 token）、失败可诊断（`errorCode` / `send-failure` 分类明确，而不是一句「连接失败」） |
+
+**要靠扩展才有的能力**（这些是社区扩展，**本仓库不带**，得自己装或自己写；下面写的是常见形态）：
+
+| 能力 | 依赖 |
+|---|---|
+| 有自己的生活：每天一份作息，20~45 分钟醒一次主动找人说话，带睡眠时段、半夜迷糊、出门由头 | 类似 `her-life` 的定时扩展 |
+| 记忆簿：事件、偏好、雷点、约定，以及每天夜里自动写一篇「她自己」的日记 | 类似 `memory-book` 的记忆扩展 |
+| 语音条：把文字合成语音，支持 `[笑]` `[叹气]` 这类声音标签，合成成真气声而不是把字念出来 | 类似 `voice-note` 的 TTS 扩展（要自备 TTS 服务） |
+| 本地资料库检索、群情报、伴侣认证、发送格式守卫… | 各自的社区扩展 |
 
 **前提**：一个 OpenAI 兼容的模型端点（官方或中转）+ 一个 QQ 协议端。会话、记忆、账本全部落在本机 `data*/` 目录，默认不上传（例外是遥测，见[第十一节](#十一已知问题与安全提示)）。
 
@@ -55,7 +65,7 @@ flowchart LR
 | `src/install/` `src/update/` | 安装状态、自动更新与回滚 |
 | `src/transports/` `src/protocols/` | 协议端接入与拉起 |
 | `ui/` | 控制台前端（原生 JS，无框架），面板在 `ui/panels/` |
-| `bundled/` | 20 个内置扩展：消息工具、记忆、表情、图片、搜索、语音转写、MCP 桥、遥测… |
+| `bundled/` | 20 个内置扩展：消息工具、记忆、表情、图片、搜索、语音转写、MCP 桥、遥测…（**不含**人格、生活、语音条这类社区扩展） |
 | `electron/` | 桌面壳（内嵌 Chromium 打开同一个控制台） |
 
 ## 三、本仓库结构
@@ -76,6 +86,7 @@ flowchart LR
 1. 去 [Releases](../../releases) 下载 `Glimmerisle-Agent-0.5.1-clean-*.zip`，解压到**空目录**
 2. 双击 `Glimmerisle Agent.exe`
 3. 首次启动后在控制台「设置」里填模型端点与 key，在「协议端」里填 OneBot 的 WS / HTTP 地址
+4. **别忘了配白名单**：`allow.groups` / `allow.private` 默认都是空，而 `allowAllWhenEmpty` 默认 `false` —— 也就是说，**装完不加名单，它对谁都不回**（这是新手最容易卡住的地方）
 
 > 包**不含** `data-v05/`（首次启动自动生成）和卸载器——原作者那把卸载程序的安装路径写死在它自己的目录，误点会删掉真实安装。
 
@@ -120,7 +131,7 @@ npm install
 
 ## 五、数据存在哪
 
-默认数据目录 `data-v05/`（源码跑 0.5.0 时是 `data/`，可用环境变量 `QQ_AGENT_DATA_DIR` 改）：
+数据目录由启动方式决定：**安装版**由启动器指到 `<安装目录>/data-v05/`；**源码跑**默认是 `<程序目录>/data/`（`v0.5.0`、`v0.5.1` 都一样）。两种情况都能用环境变量 `QQ_AGENT_DATA_DIR` 改。下面是目录内的结构：
 
 | 路径 | 内容 |
 |---|---|
@@ -137,14 +148,14 @@ npm install
 
 配置全在 `config.json`。要改就走控制台（`POST /api/config`）——手改文件会被内存里的副本覆盖。
 
-| 段 | 关键项 | 说明 |
+| 段 | 关键项 | 默认值 / 说明 |
 |---|---|---|
-| `api` | `baseUrl` `model` `visionModel` `temperature` `maxRounds` | 模型端点与参数；`visionModel` 不填就看不了图 |
-| `persona` | `botName` `roleText` `participation` | 角色卡与参与度（`low` / `medium` / `high`） |
-| `allow` | `groups` `private` | 白名单：**不在名单里的群和人一律不回** |
-| `store` | `historyCount` `contextSliderPos` | 上下文长度与压缩档位；滑条是唯一真相，直改 `historyCount` 不等于改滑条 |
-| `sticker` | `promptMaxStickers` `encourage` | 注入多少张表情、有多积极（0/1 是劝退档，2 才是正向） |
-| `skills.<id>` | `enabled` `settings` | 每个扩展的开关与设置 |
+| `api` | `baseUrl` `model` `visionModel` `temperature` `maxRounds` | `baseUrl`、`model` 默认都是空串，**必须自己填**；`visionModel` 不填就看不了图 |
+| `persona` | `botName` `roleText` `participation` | 参与度默认 `medium`，可选 `low` / `medium` / `high` |
+| `allow` | `groups` `private` `allowAllWhenEmpty` | 默认空名单 + `allowAllWhenEmpty: false` = **谁都不回** |
+| `store` | `historyCount` `contextSliderPos` | 默认 `historyCount: 80`、缺省 `contextSliderPos` 落在 4 档；滑条是唯一真相，直改 `historyCount` 不等于改滑条 |
+| `sticker` | `promptMaxStickers` `encourage` | 默认注入 10 张（硬上限 30）；`encourage` 默认 `1`，但 0 和 1 都是劝退档，`2` 才是「优先考虑配一张」 |
+| `skills.<id>` | `enabled` `settings` | 新装的扩展 `enabledByDefault` 多为 `false`，装完要在扩展页手动启用 |
 
 ## 七、写扩展
 
@@ -154,7 +165,9 @@ npm install
 |---|---|---|
 | 干什么 | 常驻能力：钩子、定时器、发送、提示词注入 | 一组工具给模型调用 |
 | 典型 | 群人格、看门狗、语音条 | 资料库检索、群情报 |
-| 位置 | `extensions/plugins/<id>/` | `extensions/skills/<id>/` |
+| 位置 | `<扩展根>/plugins/<id>/` | `<扩展根>/skills/<id>/` |
+
+> 加载器只扫 `<扩展根>/plugins` 与 `<扩展根>/skills` 两个目录。**扩展根**默认是程序目录（源码跑就是 `v0.5.1/`），安装版则是安装目录下的 `extensions/`；两种情况都能用环境变量 `QQ_AGENT_EXTENSION_ROOT` 指定。
 
 最小 manifest（`plugin.json` / `skill.json`）：
 
@@ -188,10 +201,12 @@ npm install
 | `mcp.connect` | 连接外部 MCP server |
 | `net.raw` | 原始 socket（**不开放授权**） |
 
-写完先跑静态自检（不执行代码）：
+写完先跑静态自检（只做静态检查，不执行代码）：
 
 ```bash
-node scripts/extension-dev.mjs check extensions/plugins/my-plugin --json
+# 在 v0.5.1/ 目录下，插件放 plugins/<id>
+node scripts/extension-dev.mjs check plugins/my-plugin --json
+# 技能放 skills/<id> 就换成 skills/my-plugin
 ```
 
 > 0.5.1 的 `test` 子命令有回归：声明了权限的扩展必报「无法设置测试权限」。**`check` 可信，`test` 别当真。**
@@ -218,13 +233,15 @@ curl http://127.0.0.1:3210/api/chats      # 会话列表与消息数
 
 ## 九、常见问题
 
-**连不上 QQ？** 先看 `/api/status` 的 `onebot.errorCode` 与 `diagnosis`，再看 `data-v05/logs/<日期>.log`。协议端没起、端口填错、token 不匹配各有不同错误码。
+**连不上 QQ？** 先看 `/api/status` 的 `onebot.errorCode` 与 `diagnosis`，再看 `data*/logs/<日期>.log`。协议端没起、端口填错、token 不匹配各有不同错误码。
 
 **她不理我？** 三个检查点：① 对方或群在不在 `allow` 名单里（不在就不回）；② 扩展页有没有 `code=error` 的条目；③ 群里是不是既没 @ 她、也没命中唤醒词。
 
-**语音条发不出去？** 合成走本机代理（默认 `http://127.0.0.1:7890`），可在技能设置里改或清空。代理挂掉会静默失败，日志里是「语音合成请求失败」。
+**语音条发不出去？** 这条只对「装了 TTS 类扩展」的人成立：合成通常走本机代理（常见默认 `http://127.0.0.1:7890`，可在扩展设置里改或清空）。代理挂掉会失败但不发声，日志里能看到「语音合成请求失败」。
 
-**她最近不发表情了？** 先看当时跑的哪个模型——表情调用率跟模型的工具遵从性高度相关，同一套提示词换模型能从 6% 掉到 0.2%。库里还有图、工具也没被关，那就是模型问题，不是 bug。
+**她最近不发表情了？** 先看当时跑的哪个模型——表情调用率跟模型的工具遵从性高度相关。存档者在本机 3000+ 会话上实测：同一套提示词，`gemini-3.8-flash` 约 6.6%，`deepseek-v4.1-flash` 0.6%，`deepseek-flash` 只有 0.2%。库里还有图、工具也没被关，那多半是模型问题，不是 bug。
+
+**换了人设/模型，账单突然变贵？** 正常的。systemPrompt 一变，整段前缀缓存作废，下一轮全部按原价计费，命中率会从 90%+ 掉到 20% 左右，之后逐轮回升。改人设、改记忆、调表情库顺序都会触发。
 
 **一次对话多少钱？** 账本在 `data-v05/usage-days/`。成本大头是**未被缓存的那部分上下文**（也就是聊天本身），缓存命中部分按 1 折计价；压提示词能降 token 数字，但省下的多是已经打折的缓存，钱省不了多少。
 
@@ -242,7 +259,7 @@ curl http://127.0.0.1:3210/api/chats      # 会话列表与消息数
 ## 十一、已知问题与安全提示
 
 1. **安装包未签名**：无 Authenticode，Windows SmartScreen 会提示「未知发布者」；自动更新只信 `kondius.cn` 的 Ed25519 签名清单（单点）
-2. **仍有指向原作者服务器的外联**：`kondius.cn/qq-agent/` 四处——价格表、版本检查、社区面板、技能市场。该域名目前解析不到，日志里会周期性出现 `ENOTFOUND`
+2. **仍有指向原作者服务器的外联**：`kondius.cn/qq-agent/` —— 价格表 `model-prices.json`、版本检查 `version.json`、社区面板、扩展市场；控制台的 CSP 里也放着这个域名作脚本源。该域名目前解析不到，日志里会周期性出现 `ENOTFOUND`
 3. **遥测默认开启**：`telemetry` 扩展每 6 小时上报一次，载荷 = 安装 ID + 版本 + 调用次数 + token 数 + **工具名→次数表**；不含消息正文。要关：`skills.telemetry.enabled = false`
 4. **`asar: false` + 无沙箱**：任何扩展等同本机 Node 权限，`mcp-bridge` 自带 `proc.exec`。**只装你信得过的扩展**
 5. **聊天正文会经过你自己填的端点**：`api.baseUrl` 默认是空字符串，必须自己填。填官方 API 就是官方，填第三方中转就是中转——正文和图片都会经过那台服务器。介意就用官方端点，别用来路不明的中转
