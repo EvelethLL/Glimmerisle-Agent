@@ -57,7 +57,7 @@
 6. **`/api/prompt-preview` 不可信**：对动态 `promptSections` 漏返回，且不接受 `chatKey`（body 被当 config patch，永远渲染群聊版）。验证提示词要看 `sessions/*.json` 里的 `systemPrompt`。
 7. **`store.historyCount` 与界面「上下文滑条」脱钩**：滑条只改压缩档位（`contextSliderPos` → `contextTier` / `randomPercent`），直改 `historyCount` 不等于改滑条。
 8. **`v0.5.0/` 存档里同样带着合并转发的老 bug**（`getForward` 只传 `message_id`），历史存档保持原貌**不做回改**；要跑 0.5.0 的话得手动套用 `v0.5.1/` 那三处改动。
-9. **Release 附件 `Glimmerisle-Agent-0.5.1-clean-20261116.zip` 是 11-16 打的**，不含上面的转发修复（源码已修、包未重打）。
+9. ~~Release 附件不含转发修复~~ **已重打（2026-11-17 22:10）**：`Glimmerisle-Agent-0.5.1-clean-20261117.zip`，157,158,254 字节，sha256 `928d790165dee0123fa5d46f3a3d6c4492dda1f4dfcdf3bb49aefa7f6730c0df`。只替换了包内三个 JS，exe `CRC32 E342AC7D` 与其余 923 个文件逐字节未动，条目数仍 1070。旧包 `-20261116.zip` 作废。
 
 ## 六、自研扩展里的三处修复（不在本仓库）
 
