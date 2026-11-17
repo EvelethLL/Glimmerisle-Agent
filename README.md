@@ -65,7 +65,7 @@ flowchart LR
 | `src/install/` `src/update/` | 安装状态、自动更新与回滚 |
 | `src/transports/` `src/protocols/` | 协议端接入与拉起 |
 | `ui/` | 控制台前端（原生 JS，无框架），面板在 `ui/panels/` |
-| `bundled/` | 20 个内置扩展：消息工具、记忆、表情、图片、搜索、语音转写、MCP 桥、遥测…（**不含**人格、生活、语音条这类社区扩展） |
+| `bundled/` | 19 个内置扩展：消息工具、记忆、表情、图片、搜索、语音转写、MCP 桥、遥测…（另有 `runtime-defaults/` 是组合默认值，不算扩展；**不含**人格、生活、语音条这类社区扩展） |
 | `electron/` | 桌面壳（内嵌 Chromium 打开同一个控制台） |
 
 ## 三、本仓库结构
