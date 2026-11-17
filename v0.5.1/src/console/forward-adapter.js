@@ -9,7 +9,9 @@ export async function readArchivedForward({ store, transport, chatKey, localId }
   const cached = cachedForward(original); if (cached) return cached;
   if (original.mid == null) throw new Error('这条转发缺少 QQ 消息 ID');
   if (typeof transport?.actions?.getForward !== 'function') throw new Error('当前协议端不支持展开合并转发');
-  const response = await transport.actions.getForward(original.mid);
+  // QQ NT 按 res_id 取转发 payload；存档里 media.forward.id 就是它
+  const resId = (original.media ?? []).find((item) => item.kind === 'forward')?.id;
+  const response = await transport.actions.getForward(original.mid, resId);
   const raw = response?.messages ?? response?.nodes;
   if (!Array.isArray(raw) || !raw.length) throw new Error('转发内容为空或已过期');
   const messages = raw.slice(0, 100).map((node) => {

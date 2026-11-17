@@ -27,7 +27,7 @@
 
 ## 三、本存档对 0.5.1 的改动（存档者侧）
 
-只改了**内核两处 + 显示层文案 + 品牌资源**，没有动业务逻辑：
+只改了**内核两处 + 显示层文案 + 品牌资源 + 一处协议动作修复（2026-11-17 追加）**，业务逻辑除转发那条外没动：
 
 | 文件 | 改动 | 为什么 |
 |---|---|---|
@@ -36,6 +36,7 @@
 | `v0.5.1/package.json` | `name` → `glimmerisle-agent` | 去 QQ 化的品牌改名（同上：安装目录、exe 名、窗口标题、安装记录文件名） |
 | `v0.5.1/ui/shell/*`、`ui/panels/{settings,rules,community}/*`、`electron/main.js` | 约 20 处显示文案改为 Glimmerisle / 微光星屿；品牌行字号 20 → **17px**（`≤900px` 断点 15px） | `GLIMMERISLE` 比 `QQ AGENT` 长，20px 下会被 `nowrap + overflow:hidden` 裁掉 |
 | 图标（不在本仓库） | 照 `assets/banner.png` **重画**双星而非裁切（流星尾巴与光晕亮度重叠，分不开）；7 档 16~256px 打进 `glimmerisle.ico`，16/24px 只画一颗星 | 换名后沿用它原来的星形徽记 |
+| `v0.5.1/bundled/transport-onebot/provider.js`<br>`v0.5.1/bundled/query-tools/index.js`<br>`v0.5.1/src/console/forward-adapter.js` | **合并转发展开修复（2026-11-17 追加）**：`getForward(messageId, resId)` 把存档里的 `media.forward.id`（res_id）一并传给 OneBot；`read_forward` 和控制台「展开转发」两个调用点各自补上 res_id | QQ NT 的合并转发在 NapCat 侧**按 res_id 取 payload**，只给 `message_id` 会返回 `download forward message payload is empty`（retcode=100）→ 表现为「看不了转发记录」。复现：直连 `POST /get_forward_msg {"message_id":…}` 报 retcode 100；改传 `{"id":<res_id>}` 或两者同传即成功 |
 
 > 想要原版 0.5.1 的行为，把 `prompt.js` / `config.js` 换回安装包里的原始文件即可；其余 UI 文案改动不影响运行。
 
@@ -55,6 +56,8 @@
 5. **`extension-dev test` 在 0.5.1 有回归**：`setOverride()` 对「启用即授权」的扩展返回 false → 任何声明了权限的扩展跑 `test` 必报「无法设置测试权限」而全部 FAIL。**`check` 仍可信，别据此判定扩展坏了。**
 6. **`/api/prompt-preview` 不可信**：对动态 `promptSections` 漏返回，且不接受 `chatKey`（body 被当 config patch，永远渲染群聊版）。验证提示词要看 `sessions/*.json` 里的 `systemPrompt`。
 7. **`store.historyCount` 与界面「上下文滑条」脱钩**：滑条只改压缩档位（`contextSliderPos` → `contextTier` / `randomPercent`），直改 `historyCount` 不等于改滑条。
+8. **`v0.5.0/` 存档里同样带着合并转发的老 bug**（`getForward` 只传 `message_id`），历史存档保持原貌**不做回改**；要跑 0.5.0 的话得手动套用 `v0.5.1/` 那三处改动。
+9. **Release 附件 `Glimmerisle-Agent-0.5.1-clean-20261116.zip` 是 11-16 打的**，不含上面的转发修复（源码已修、包未重打）。
 
 ## 六、自研扩展里的三处修复（不在本仓库）
 

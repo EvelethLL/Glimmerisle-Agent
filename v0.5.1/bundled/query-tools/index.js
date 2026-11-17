@@ -66,8 +66,10 @@ export default {
         if (String(m.text).startsWith('[合并转发 共')) return archivedResult(m, '该转发已展开（读的是存档）');
         const getForward = ctx.capability('transport.actions')?.getForward;
         if (typeof getForward !== 'function') return { ok: false, error: '当前传输提供者不支持展开合并转发' };
+        // QQ NT 侧按 res_id 取 payload：存档里 media.forward.id 就是它，不带就会拿到空 payload
+        const resId = (m.media ?? []).find((item) => (item.kind ?? item.type) === 'forward')?.id;
         let res;
-        try { res = await getForward(mid); }
+        try { res = await getForward(mid, resId); }
         catch (err) { return { ok: false, error: `展开失败：${err?.message ?? err}` }; }
         const current = findByMid(c.chatKey, mid, c.session);
         if (!current) return { ok: false, error: '展开失败：原消息已从存档移除' };

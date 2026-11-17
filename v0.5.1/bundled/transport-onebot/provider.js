@@ -243,7 +243,14 @@ export function createOneBotProvider({ cfg, log = console, onEvent, onStatus, to
         if (member.user_id != null && String(member.user_id) !== String(userId)) throw new Error('群成员查询返回的 QQ 号不匹配');
         return { userId: String(member.user_id ?? userId), card: typeof member.card === 'string' ? member.card : '', nickname: typeof member.nickname === 'string' ? member.nickname : '' };
       },
-      async getForward(messageId) { return (await client.call('get_forward_msg', { message_id: Number(messageId) }))?.data; },
+      // QQ NT 的合并转发：只给 message_id 时 NapCat 常返回
+      // 「download forward message payload is empty」（payload 按 res_id 存），
+      // 存档里的 media.forward.id 就是 res_id，有就一起带上。
+      async getForward(messageId, resId) {
+        const body = { message_id: Number(messageId) };
+        if (resId != null && String(resId).trim()) body.id = String(resId);
+        return (await client.call('get_forward_msg', body))?.data;
+      },
       async getVideo(file) { return (await client.call('get_video', { file: String(file) }))?.data; },
       async getFile(file) { return (await client.call('get_file', { file: String(file) }))?.data; },
       async getRecord(file) { return (await client.call('get_record', { file: String(file), out_format: 'mp3' }))?.data; },
